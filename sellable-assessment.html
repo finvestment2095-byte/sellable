@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Acquisition Readiness - Quick Assessment</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f9fafb;color:#1f2937;line-height:1.6}
+.container{max-width:640px;margin:0 auto;padding:24px 20px}
+.header{margin-bottom:32px}
+.header h1{font-size:22px;font-weight:700;color:#111827;margin-bottom:8px}
+.header p{font-size:15px;color:#6b7280}
+.intro{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-bottom:24px;font-size:15px;color:#374151}
+.intro p{margin-bottom:12px}
+.intro p:last-child{margin-bottom:0}
+.question-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-bottom:16px;transition:border-color 0.2s}
+.question-card.answered{border-color:#10b981}
+.q-number{font-size:12px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.q-text{font-size:16px;font-weight:600;color:#111827;margin-bottom:16px}
+.options{display:flex;flex-direction:column;gap:8px}
+.option{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;cursor:pointer;transition:all 0.15s;font-size:14px;color:#374151}
+.option:hover{background:#f0fdf4;border-color:#86efac}
+.option.selected{background:#f0fdf4;border-color:#10b981;color:#111827;font-weight:500}
+.option input{margin-top:3px;accent-color:#10b981}
+.insight{margin-top:14px;padding:12px 14px;background:#fffbeb;border-left:3px solid #f59e0b;border-radius:0 8px 8px 0;font-size:13px;color:#92400e;display:none}
+.insight.visible{display:block}
+.insight strong{font-weight:600}
+.results-section{display:none;background:#fff;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;margin-top:24px}
+.results-header{background:#111827;color:#fff;padding:24px;text-align:center}
+.results-header h2{font-size:20px;font-weight:700;margin-bottom:4px}
+.results-header p{font-size:14px;color:#9ca3af}
+.score-display{text-align:center;padding:32px 24px}
+.score-circle{width:140px;height:140px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;color:#fff}
+.score-label{font-size:14px;color:#6b7280;margin-bottom:24px}
+.dim-bars{padding:0 24px 24px;text-align:left}
+.dim-bar{margin-bottom:14px}
+.dim-bar-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+.dim-bar-label span:first-child{font-weight:600;color:#374151}
+.dim-bar-label span:last-child{color:#6b7280}
+.dim-bar-track{height:8px;background:#f3f4f6;border-radius:4px;overflow:hidden}
+.dim-bar-fill{height:100%;border-radius:4px;transition:width 0.6s ease}
+.gap-section{padding:24px;border-top:1px solid #e5e7eb}
+.gap-section h3{font-size:16px;font-weight:700;color:#111827;margin-bottom:12px}
+.gap-section p{font-size:14px;color:#374151;margin-bottom:12px}
+.gap-section p:last-child{margin-bottom:0}
+.gap-highlight{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:16px;margin:16px 0}
+.gap-highlight .gap-label{font-size:12px;font-weight:700;color:#991b1b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;text-align:center}
+.gap-highlight .gap-numbers{display:flex;align-items:center;gap:12px;justify-content:center}
+.gap-highlight .gap-num{font-size:28px;font-weight:800}
+.gap-highlight .gap-arrow{font-size:20px;color:#9ca3af}
+.gap-highlight .gap-low{color:#dc2626}
+.gap-highlight .gap-high{color:#10b981}
+.gap-highlight .gap-caption{font-size:12px;color:#6b7280;margin-top:8px;text-align:center}
+.submit-btn{display:block;width:100%;background:#111827;color:#fff;padding:14px;border-radius:8px;font-size:16px;font-weight:600;border:none;cursor:pointer;margin-top:24px}
+.submit-btn:hover{background:#374151}
+.submit-btn:disabled{background:#d1d5db;cursor:not-allowed}
+.progress{display:flex;gap:4px;margin-bottom:24px}
+.progress-dot{flex:1;height:4px;background:#e5e7eb;border-radius:2px;transition:background 0.3s}
+.progress-dot.done{background:#10b981}
+.name-input{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-bottom:16px}
+.name-input label{font-size:14px;font-weight:600;color:#374151;display:block;margin-bottom:8px}
+.name-input input{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:15px;color:#111827}
+.name-input input:focus{outline:none;border-color:#10b981}
+.confirm-section{text-align:center;padding:40px 24px}
+.confirm-tick{width:64px;height:64px;background:#10b981;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:32px;color:#fff}
+.confirm-section h3{font-size:20px;font-weight:700;color:#111827;margin-bottom:8px}
+.confirm-section p{font-size:14px;color:#6b7280;margin-bottom:6px}
+.sending-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:100;align-items:center;justify-content:center}
+.sending-overlay.active{display:flex}
+.sending-box{background:#fff;border-radius:12px;padding:32px;text-align:center;max-width:300px}
+.spinner{width:40px;height:40px;border:4px solid #e5e7eb;border-top:4px solid #111827;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.optional-msg{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;color:#374151;margin:12px 0;resize:vertical;min-height:60px;font-family:inherit}
+.optional-msg:focus{outline:none;border-color:#10b981}
+.cta-section{padding:24px;background:#f0fdf4;border-top:1px solid #e5e7eb}
+.cta-section p{font-size:14px;color:#374151;margin-bottom:12px;text-align:center}
+.cta-label{font-size:13px;color:#6b7280;margin-bottom:6px;text-align:left}
+.cta-btn{display:block;width:100%;background:#111827;color:#fff;padding:14px;border-radius:8px;font-size:16px;font-weight:600;border:none;cursor:pointer;text-align:center;margin-top:8px}
+.cta-btn:hover{background:#374151}
+</style>
+</head>
+<body>
+
+<!-- ===== CONFIG: Paste your Apps Script URL here ===== -->
+<script>
+var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwCLmFlmpZFsO7qxzhuar_0MhZNGsZFPWejh1O86ypmR0vhFAFvQKdH6tIZHk5_NEoYkQ/exec";
+</script>
+<!-- ================================================== -->
+
+<div class="sending-overlay" id="sendingOverlay">
+  <div class="sending-box">
+    <div class="spinner"></div>
+    <div style="font-size:15px;font-weight:600;color:#111827">Submitting your results...</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="header">
+    <h1>How acquisition-ready is your business?</h1>
+    <p>8 questions. 3 minutes. Honest answers only.</p>
+  </div>
+
+  <div class="intro" id="introSection">
+    <p>G'day. This is a quick follow-up from our chat. I mentioned I'm researching what makes trade businesses acquirable versus what gets left on the table when an owner goes to sell.</p>
+    <p>These are the same areas that buyers and private equity firms score against when they assess a business. Most owners have never seen their business through this lens. Takes about 3 minutes and you'll see your results straight away.</p>
+    <p style="font-size:13px;color:#9ca3af">Your answers are confidential and shared only with Andrew.</p>
+  </div>
+
+  <div class="name-input" id="nameSection">
+    <label>Your name and business name</label>
+    <input type="text" id="respondentName" placeholder="e.g. Kevin - KC's NB Locksmiths">
+  </div>
+
+  <div class="progress" id="progress"></div>
+  <div id="questions"></div>
+  <button class="submit-btn" id="submitBtn" disabled onclick="showResults()">See your results</button>
+  <div class="results-section" id="results"></div>
+</div>
+
+<script>
+// Read URL params for personalization
+var urlParams = new URLSearchParams(window.location.search);
+var paramRank = urlParams.get("c") || "";
+var paramName = urlParams.get("name") || "";
+var paramBiz = urlParams.get("biz") || "";
+
+// Pre-fill name field if URL params provided
+if (paramName || paramBiz) {
+  var prefill = "";
+  if (paramName && paramBiz) prefill = paramName + " - " + paramBiz;
+  else if (paramName) prefill = paramName;
+  else prefill = paramBiz;
+  document.getElementById("respondentName").value = prefill;
+}
+
+// Personalize intro if we have a name
+if (paramName) {
+  document.getElementById("introSection").innerHTML =
+    "<p>G'day " + paramName + ". This is a quick follow-up from our chat. I mentioned I'm researching what makes trade businesses acquirable versus what gets left on the table when an owner goes to sell.</p>" +
+    "<p>These are the same areas that buyers and private equity firms score against when they assess a business. Most owners have never seen their business through this lens. Takes about 3 minutes and you'll see your results straight away.</p>" +
+    '<p style="font-size:13px;color:#9ca3af">Your answers are confidential and shared only with Andrew.</p>';
+}
+
+var QUESTIONS = [
+  {
+    id: "q1",
+    dimension: "Founder Dependency",
+    weight: 20,
+    text: "If you took 4 weeks off tomorrow - no phone, no emails - what happens to the business?",
+    options: [
+      { score: 1, text: "It stops. I am the business." },
+      { score: 2, text: "It would struggle. Maybe last a week or two." },
+      { score: 3, text: "The team handles the jobs but I do all the quoting and client stuff." },
+      { score: 4, text: "My foreman runs jobs, someone else does admin, but the big clients still call me." },
+      { score: 5, text: "Honestly? It runs fine without me for a month." }
+    ],
+    insight: "This is the number one thing buyers look at. A business that stops when the owner stops isn't a business to a buyer - it's a job. And jobs don't sell for a multiple."
+  },
+  {
+    id: "q2",
+    dimension: "Founder Dependency",
+    weight: 20,
+    text: "Your best clients - are they loyal to you personally, or would they stay if someone else took over?",
+    options: [
+      { score: 1, text: "All of them know me. That's why they call." },
+      { score: 2, text: "Most of them, especially the big ones." },
+      { score: 3, text: "Mix - some ask for me, some just call the business number." },
+      { score: 4, text: "My team handles most relationships now." },
+      { score: 5, text: "The business name is stronger than my name." }
+    ],
+    insight: "Buyers call this 'personal goodwill' versus 'business goodwill.' Only business goodwill transfers in a sale. If the clients are loyal to you, a buyer is paying for relationships that walk out the door when you do."
+  },
+  {
+    id: "q3",
+    dimension: "Recurring Revenue",
+    weight: 15,
+    text: "What percentage of your work is repeat or contracted versus new one-off jobs?",
+    options: [
+      { score: 1, text: "Pretty much all one-off. I quote every job fresh." },
+      { score: 2, text: "Maybe 10-15% is repeat clients but nothing locked in." },
+      { score: 3, text: "Some regular clients. Maybe 20-30% is repeat work." },
+      { score: 4, text: "About 40% is maintenance contracts or regular agreements." },
+      { score: 5, text: "More than half our work is contracted or recurring." }
+    ],
+    insight: "Recurring revenue is the single biggest driver of business value. A dollar of contracted recurring revenue is worth 3-5x more than a dollar of one-off project work to a buyer. It's the difference between buying a business and buying a pipeline."
+  },
+  {
+    id: "q4",
+    dimension: "Recurring Revenue",
+    weight: 15,
+    text: "Do you have any formal maintenance agreements or ongoing service contracts with clients?",
+    options: [
+      { score: 1, text: "No, never done that." },
+      { score: 2, text: "Thought about it but never set it up." },
+      { score: 3, text: "A few informal ones, mostly with commercial clients." },
+      { score: 4, text: "Yes, formal agreements with 10-20 clients." },
+      { score: 5, text: "It's the core of our model. 30+ active contracts." }
+    ],
+    insight: "Maintenance contracts are the easiest way to shift a trade business from one-off to recurring. Even 5-10 contracts creates a revenue floor that makes the business predictable - and predictable is what buyers pay a premium for."
+  },
+  {
+    id: "q5",
+    dimension: "Customer Concentration",
+    weight: 10,
+    text: "If your single biggest client disappeared tomorrow, how much would that hurt?",
+    options: [
+      { score: 1, text: "Devastating. They're 30% or more of my revenue." },
+      { score: 2, text: "Big hit. Maybe 20% of my work." },
+      { score: 3, text: "Noticeable but manageable. 10-15%." },
+      { score: 4, text: "I'm pretty diversified. Under 10%." },
+      { score: 5, text: "No single client is more than 5% of my work." }
+    ],
+    insight: "Customer concentration is a risk factor. If one client leaving would seriously hurt the business, a buyer sees that as a liability. Diversified revenue across many clients means the business is more resilient and more valuable."
+  },
+  {
+    id: "q6",
+    dimension: "Systems Documentation",
+    weight: 20,
+    text: "If you hired someone brand new tomorrow, is there anything written down they could follow to do the job your way?",
+    options: [
+      { score: 1, text: "It's all in my head. I just show them." },
+      { score: 2, text: "Some checklists but nothing formal." },
+      { score: 3, text: "Some processes are written down, mostly the safety stuff." },
+      { score: 4, text: "Process docs for most of the core tasks." },
+      { score: 5, text: "Full operations manual. Anyone could pick it up and run." }
+    ],
+    insight: "This is where most trade businesses lose the most value. Everything in the owner's head is worth zero to a buyer because it leaves when the owner leaves. Written systems are the difference between selling a business and selling a client list."
+  },
+  {
+    id: "q7",
+    dimension: "Systems Documentation",
+    weight: 20,
+    text: "Honestly - if something happened to you unexpectedly, what happens to the business?",
+    options: [
+      { score: 1, text: "It'd probably just close." },
+      { score: 2, text: "My wife/partner would have to figure it out somehow." },
+      { score: 3, text: "I've thought about it but haven't done anything about it." },
+      { score: 4, text: "Some basic continuity plans are in place." },
+      { score: 5, text: "Key person insurance, documented processes, the lot." }
+    ],
+    insight: "This question isn't just about selling. It's about protecting what you've built. If 25 years of work can disappear because of one bad day, that's not just a buyer risk - it's a personal one."
+  },
+  {
+    id: "q8",
+    dimension: "Management Depth",
+    weight: 10,
+    text: "When was the last time you took a proper holiday? How long, and were you on the phone the whole time?",
+    options: [
+      { score: 1, text: "Can't remember. I don't really take holidays." },
+      { score: 2, text: "Long weekend here and there. Always on the phone." },
+      { score: 3, text: "A week off if I set everything up beforehand." },
+      { score: 4, text: "A couple of weeks. Foreman and office handle it." },
+      { score: 5, text: "3-4 weeks, no dramas. The team runs without me." }
+    ],
+    insight: "This isn't a trick question. If you can't leave, a buyer can't take over. The length of time you can be away is a direct measure of how transferable the business is."
+  }
+];
+
+var answers = {};
+var totalQs = QUESTIONS.length;
+
+function init() {
+  var progHtml = "";
+  for (var i = 0; i < totalQs; i++) {
+    progHtml += '<div class="progress-dot" id="prog' + i + '"></div>';
+  }
+  document.getElementById("progress").innerHTML = progHtml;
+
+  var html = "";
+  QUESTIONS.forEach(function(q, idx) {
+    html += '<div class="question-card" id="card' + idx + '">';
+    html += '<div class="q-number">Question ' + (idx + 1) + ' of ' + totalQs + '</div>';
+    html += '<div class="q-text">' + q.text + '</div>';
+    html += '<div class="options">';
+    q.options.forEach(function(opt) {
+      html += '<label class="option" id="opt' + q.id + '_' + opt.score + '" onclick="selectAnswer(\'' + q.id + '\',' + opt.score + ',' + idx + ')">';
+      html += '<input type="radio" name="' + q.id + '" value="' + opt.score + '">';
+      html += opt.text;
+      html += '</label>';
+    });
+    html += '</div>';
+    html += '<div class="insight" id="insight' + idx + '"><strong>Why this matters:</strong> ' + q.insight + '</div>';
+    html += '</div>';
+  });
+  document.getElementById("questions").innerHTML = html;
+}
+
+function selectAnswer(qId, score, idx) {
+  answers[qId] = score;
+  var opts = document.querySelectorAll('[name="' + qId + '"]');
+  opts.forEach(function(o) { o.closest(".option").classList.remove("selected"); });
+  document.getElementById("opt" + qId + "_" + score).classList.add("selected");
+  document.getElementById("card" + idx).classList.add("answered");
+  document.getElementById("insight" + idx).classList.add("visible");
+  document.getElementById("prog" + idx).classList.add("done");
+  var count = Object.keys(answers).length;
+  document.getElementById("submitBtn").disabled = count < totalQs;
+}
+
+function calcResults() {
+  var totalWeight = 0;
+  var weightedScore = 0;
+  var dimScores = {};
+
+  QUESTIONS.forEach(function(q) {
+    var s = answers[q.id] || 1;
+    totalWeight += q.weight;
+    weightedScore += (s / 5) * q.weight;
+    if (!dimScores[q.dimension]) {
+      dimScores[q.dimension] = { total: 0, count: 0 };
+    }
+    dimScores[q.dimension].total += s;
+    dimScores[q.dimension].count += 1;
+  });
+
+  var pct = Math.round((weightedScore / totalWeight) * 100);
+
+  var color, label;
+  if (pct <= 30) { color = "#dc2626"; label = "Not Acquisition Ready"; }
+  else if (pct <= 50) { color = "#f59e0b"; label = "Needs Significant Work"; }
+  else if (pct <= 70) { color = "#3b82f6"; label = "Getting There"; }
+  else { color = "#10b981"; label = "Strong Position"; }
+
+  var lowMult, highMult;
+  if (pct <= 25) { lowMult = "0.5x"; highMult = "1x"; }
+  else if (pct <= 40) { lowMult = "1x"; highMult = "1.5x"; }
+  else if (pct <= 60) { lowMult = "1.5x"; highMult = "2.5x"; }
+  else if (pct <= 80) { lowMult = "2.5x"; highMult = "3.5x"; }
+  else { lowMult = "3x"; highMult = "5x"; }
+
+  var dims = [
+    { name: "Founder Dependency", color: "#e74c3c" },
+    { name: "Recurring Revenue", color: "#3498db" },
+    { name: "Customer Concentration", color: "#e67e22" },
+    { name: "Systems Documentation", color: "#9b59b6" },
+    { name: "Management Depth", color: "#2ecc71" }
+  ];
+
+  return { pct: pct, color: color, label: label, lowMult: lowMult, highMult: highMult, dims: dims, dimScores: dimScores };
+}
+
+function showResults() {
+  var r = calcResults();
+
+  var html = '';
+  html += '<div class="results-header"><h2>Your Acquisition Readiness Score</h2><p>Based on the same framework buyers use</p></div>';
+  html += '<div class="score-display">';
+  html += '<div class="score-circle" style="background:' + r.color + '">' + r.pct + '%</div>';
+  html += '<div class="score-label">' + r.label + '</div>';
+  html += '</div>';
+
+  html += '<div class="dim-bars">';
+  r.dims.forEach(function(d) {
+    var ds = r.dimScores[d.name];
+    if (!ds) return;
+    var avg = ds.total / ds.count;
+    var dimPct = Math.round((avg / 5) * 100);
+    var dimLabel = dimPct <= 30 ? "Critical" : dimPct <= 50 ? "Weak" : dimPct <= 70 ? "Fair" : "Strong";
+    html += '<div class="dim-bar">';
+    html += '<div class="dim-bar-label"><span>' + d.name + '</span><span>' + dimPct + '% - ' + dimLabel + '</span></div>';
+    html += '<div class="dim-bar-track"><div class="dim-bar-fill" style="width:' + dimPct + '%;background:' + d.color + '"></div></div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  // Value gap hook
+  html += '<div class="gap-section">';
+  html += '<h3>What this means in dollar terms</h3>';
+  html += '<p>Buyers use a multiple of your annual earnings to value a trade business. Where your business sits on that scale depends almost entirely on the areas scored above.</p>';
+  html += '<div class="gap-highlight">';
+  html += '<div class="gap-label">Your estimated sale multiple range</div>';
+  html += '<div class="gap-numbers">';
+  html += '<span class="gap-num gap-low">' + r.lowMult + '</span>';
+  html += '<span class="gap-arrow">to</span>';
+  html += '<span class="gap-num" style="color:#f59e0b">' + r.highMult + '</span>';
+  html += '</div>';
+  html += '<div class="gap-caption">Businesses that address the gaps above typically move to the 2.5x - 4x range</div>';
+  html += '</div>';
+  html += '<p>That gap between where you are now and where you could be with the right structure in place - that is the value most trade business owners leave on the table. Not because the business isn\'t good. Because nobody showed them what a buyer actually looks for.</p>';
+  html += '</div>';
+
+  // CTA - optional message then auto-submit
+  html += '<div class="cta-section" id="ctaSection">';
+  html += '<p>Your results have been shared with Andrew automatically. If you want to add anything, drop a note below.</p>';
+  html += '<div class="cta-label">Anything you want to add? (optional)</div>';
+  html += '<textarea class="optional-msg" id="optionalMsg" placeholder="e.g. Yeah this is about what I expected... or happy to chat about the systems side..."></textarea>';
+  html += '<button class="cta-btn" onclick="sendMessage()">Send note to Andrew</button>';
+  html += '</div>';
+
+  document.getElementById("results").style.display = "block";
+  document.getElementById("results").innerHTML = html;
+  document.getElementById("submitBtn").style.display = "none";
+
+  setTimeout(function() {
+    document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 100);
+
+  // Auto-submit results immediately
+  submitToSheet("");
+}
+
+function sendMessage() {
+  var msg = document.getElementById("optionalMsg").value;
+  if (msg.trim()) {
+    submitToSheet(msg);
+    var cta = document.getElementById("ctaSection");
+    cta.innerHTML = '<div style="text-align:center;padding:12px"><div style="font-size:24px;margin-bottom:8px">&#10003;</div><p style="font-weight:600;color:#111827">Message sent. Andrew will be in touch.</p></div>';
+  }
+}
+
+function submitToSheet(message) {
+  var r = calcResults();
+  var nameVal = document.getElementById("respondentName").value || "";
+  var parts = nameVal.split(" - ");
+  var personName = parts[0] ? parts[0].trim() : (paramName || "");
+  var bizName = parts[1] ? parts[1].trim() : (paramBiz || "");
+
+  var fd = r.dimScores["Founder Dependency"];
+  var rr = r.dimScores["Recurring Revenue"];
+  var cc = r.dimScores["Customer Concentration"];
+  var sd = r.dimScores["Systems Documentation"];
+  var md = r.dimScores["Management Depth"];
+
+  var payload = {
+    candidateRank: paramRank,
+    name: personName,
+    business: bizName,
+    answers: answers,
+    overallPct: r.pct,
+    label: r.label,
+    lowMult: r.lowMult,
+    highMult: r.highMult,
+    dimensions: {
+      fd: fd ? (fd.total / fd.count).toFixed(1) : "",
+      rr: rr ? (rr.total / rr.count).toFixed(1) : "",
+      cc: cc ? (cc.total / cc.count).toFixed(1) : "",
+      sd: sd ? (sd.total / sd.count).toFixed(1) : "",
+      md: md ? (md.total / md.count).toFixed(1) : ""
+    },
+    message: message
+  };
+
+  if (APPS_SCRIPT_URL === "PASTE_YOUR_APPS_SCRIPT_URL_HERE") {
+    console.log("Apps Script URL not configured. Payload:", JSON.stringify(payload));
+    return;
+  }
+
+  // Show overlay only on initial submit
+  if (!message) {
+    document.getElementById("sendingOverlay").classList.add("active");
+  }
+
+  fetch(APPS_SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  }).then(function() {
+    document.getElementById("sendingOverlay").classList.remove("active");
+    console.log("Submitted to Google Sheets");
+  }).catch(function(err) {
+    document.getElementById("sendingOverlay").classList.remove("active");
+    console.error("Submit error:", err);
+  });
+}
+
+init();
+</script>
+</body>
+</html>
+
